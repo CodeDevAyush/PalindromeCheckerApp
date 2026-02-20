@@ -4,9 +4,13 @@ import java.util.Stack;
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
+
         String word = "civic";
+
         Queue<Character> queue = new LinkedList<>();
+
         Stack<Character> stack = new Stack<>();
+
         for (int i = 0; i < word.length(); i++) {
             char ch = word.charAt(i);
             queue.add(ch);
