@@ -1,8 +1,18 @@
+
 import java.util.Scanner;
 
-public class Main {
+class PalindromeChecker {
 
-    public static boolean isPalindrome(String input) {
+    private String input;
+
+    public PalindromeChecker(String input) {
+        this.input = input;
+    }
+
+    public boolean checkPalindrome() {
+        if (input == null || input.isEmpty()) {
+            return true;
+        }
 
         String normalized = input.replaceAll("\\s+", "").toLowerCase();
 
@@ -19,6 +29,9 @@ public class Main {
 
         return true;
     }
+}
+
+public class Main {
 
     public static void main(String[] args) {
 
@@ -27,10 +40,10 @@ public class Main {
         System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        boolean result = isPalindrome(input);
+        PalindromeChecker checker = new PalindromeChecker(input);
 
-        if (result) {
-            System.out.println("The given string is a Palindrome (ignoring spaces and case).");
+        if (checker.checkPalindrome()) {
+            System.out.println("The given string is a Palindrome.");
         } else {
             System.out.println("The given string is NOT a Palindrome.");
         }
