@@ -1,106 +1,64 @@
 
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Stack;
 
-interface PalindromeStrategy {
-    boolean isPalindrome(String input);
-}
+public class Main {
 
-class StackStrategy implements PalindromeStrategy {
-    @Override
-    public boolean isPalindrome(String input) {
-        if (input == null || input.isEmpty()) return true;
+    public static boolean iterativePalindrome(String str) {
+        String normalized = str.replaceAll("\\s+", "").toLowerCase();
+        int start = 0;
+        int end = normalized.length() - 1;
+        while (start < end) {
+            if (normalized.charAt(start) != normalized.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
 
-        String normalized = input.replaceAll("\\s+", "").toLowerCase();
+    public static boolean recursivePalindrome(String str, int start, int end) {
+        String normalized = str.replaceAll("\\s+", "").toLowerCase();
+        if (start >= end) return true;
+        if (normalized.charAt(start) != normalized.charAt(end)) return false;
+        return recursivePalindrome(normalized, start + 1, end - 1);
+    }
 
+    public static boolean stackPalindrome(String str) {
+        String normalized = str.replaceAll("\\s+", "").toLowerCase();
         Stack<Character> stack = new Stack<>();
         for (char c : normalized.toCharArray()) {
             stack.push(c);
         }
-
         for (char c : normalized.toCharArray()) {
-            if (c != stack.pop()) {
-                return false;
-            }
+            if (c != stack.pop()) return false;
         }
         return true;
     }
-}
-
-class DequeStrategy implements PalindromeStrategy {
-    @Override
-    public boolean isPalindrome(String input) {
-        if (input == null || input.isEmpty()) return true;
-
-        String normalized = input.replaceAll("\\s+", "").toLowerCase();
-
-        Deque<Character> deque = new LinkedList<>();
-        for (char c : normalized.toCharArray()) {
-            deque.addLast(c);
-        }
-
-        while (deque.size() > 1) {
-            if (!deque.removeFirst().equals(deque.removeLast())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
-
-class PalindromeCheckerContext {
-    private PalindromeStrategy strategy;
-
-    public PalindromeCheckerContext(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public void setStrategy(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean checkPalindrome(String input) {
-        return strategy.isPalindrome(input);
-    }
-}
-
-public class Main {
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter a string: ");
+        System.out.print("Enter a string to test: ");
         String input = scanner.nextLine();
 
-        System.out.println("Choose strategy:");
-        System.out.println("1 - Stack-based");
-        System.out.println("2 - Deque-based");
-        System.out.print("Enter choice: ");
-        int choice = scanner.nextInt();
+        long startTime = System.nanoTime();
+        boolean iterativeResult = iterativePalindrome(input);
+        long iterativeTime = System.nanoTime() - startTime;
 
-        PalindromeStrategy strategy;
-        if (choice == 1) {
-            strategy = new StackStrategy();
-        } else if (choice == 2) {
-            strategy = new DequeStrategy();
-        } else {
-            System.out.println("Invalid choice! Defaulting to StackStrategy.");
-            strategy = new StackStrategy();
-        }
+        startTime = System.nanoTime();
+        boolean recursiveResult = recursivePalindrome(input, 0, input.replaceAll("\\s+", "").length() - 1);
+        long recursiveTime = System.nanoTime() - startTime;
 
-        PalindromeCheckerContext context = new PalindromeCheckerContext(strategy);
+        startTime = System.nanoTime();
+        boolean stackResult = stackPalindrome(input);
+        long stackTime = System.nanoTime() - startTime;
 
-        boolean result = context.checkPalindrome(input);
-
-        if (result) {
-            System.out.println("The given string is a Palindrome.");
-        } else {
-            System.out.println("The given string is NOT a Palindrome.");
-        }
+        System.out.println("\n--- Performance Comparison ---");
+        System.out.printf("Iterative Method: Result=%b, Time=%d ns%n", iterativeResult, iterativeTime);
+        System.out.printf("Recursive Method: Result=%b, Time=%d ns%n", recursiveResult, recursiveTime);
+        System.out.printf("Stack Method:     Result=%b, Time=%d ns%n", stackResult, stackTime);
 
         scanner.close();
     }
